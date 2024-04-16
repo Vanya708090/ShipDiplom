@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using ShipDiplom.Database.Configuration;
 using ShipDiplom.Models.Entities;
 
 namespace ShipDiplom.Database;
@@ -16,5 +17,9 @@ public class AppDbContext : DbContext
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         base.OnModelCreating(modelBuilder);
+
+        modelBuilder.ApplyConfiguration(new PierConfiguration());
+        modelBuilder.ApplyConfiguration(new ShipConfiguration());
+
     }
 }
