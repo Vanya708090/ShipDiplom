@@ -1,36 +1,50 @@
-namespace ShipDiplom
+using Microsoft.EntityFrameworkCore;
+using ShipDiplom.Database;
+
+namespace ShipDiplom;
+
+public class Program
 {
-    public class Program
+    public static void Main(string[] args)
     {
-        public static void Main(string[] args)
+        var builder = WebApplication.CreateBuilder(args);
+        var configuration = builder.Configuration;
+
+        builder.Configuration
+            .AddJsonFile("appsettings.json", optional: false, reloadOnChange: false)
+            .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true, reloadOnChange: false)
+            .AddEnvironmentVariables(prefix: "ENV_")
+            .AddUserSecrets("AF72ABA5-6526-46CC-AFD6-CAB7550E7BC1");
+
+        builder.Services.AddDbContext<AppDbContext>(options =>
         {
-            var builder = WebApplication.CreateBuilder(args);
+            options.UseNpgsql(configuration["App:DbConnectionString"]);
+            options.UseQueryTrackingBehavior(QueryTrackingBehavior.TrackAll);
+        });
 
-            // Add services to the container.
-            builder.Services.AddControllersWithViews();
+        builder.Services.AddControllersWithViews();
 
-            var app = builder.Build();
+        builder.Services.AddDomain();
 
-            // Configure the HTTP request pipeline.
-            if (!app.Environment.IsDevelopment())
-            {
-                app.UseExceptionHandler("/Home/Error");
-                // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-                app.UseHsts();
-            }
+        var app = builder.Build();
 
-            app.UseHttpsRedirection();
-            app.UseStaticFiles();
-
-            app.UseRouting();
-
-            app.UseAuthorization();
-
-            app.MapControllerRoute(
-                name: "default",
-                pattern: "{controller=Home}/{action=Index}/{id?}");
-
-            app.Run();
+        if (!app.Environment.IsDevelopment())
+        {
+            app.UseExceptionHandler("/Home/Error");
+            app.UseHsts();
         }
+
+        app.UseHttpsRedirection();
+        app.UseStaticFiles();
+
+        app.UseRouting();
+
+        app.UseAuthorization();
+
+        app.MapControllerRoute(
+            name: "default",
+            pattern: "{controller=Home}/{action=Index}/{id?}");
+
+        app.Run();
     }
 }
