@@ -1,5 +1,7 @@
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using ShipDiplom.Database;
+using ShipDiplom.Models;
 
 namespace ShipDiplom;
 
@@ -15,6 +17,11 @@ public class Program
             .AddJsonFile($"appsettings.{Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT")}.json", optional: true, reloadOnChange: false)
             .AddEnvironmentVariables(prefix: "ENV_")
             .AddUserSecrets("AF72ABA5-6526-46CC-AFD6-CAB7550E7BC1");
+
+        builder.Services.AddSingleton(new MapperConfiguration(mc =>
+        {
+            mc.AddProfile<ControllersMappingProfile>();
+        }).CreateMapper());
 
         builder.Services.AddDbContext<AppDbContext>(options =>
         {

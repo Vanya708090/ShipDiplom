@@ -7,4 +7,5 @@ public class Pier: BaseEntity
     public float? Width { get; set; }
     public string TrackingNumber { get; set; }
     public string Location { get; set; }
+    public List<Ship> Ships { get; set; } = new();
 }
