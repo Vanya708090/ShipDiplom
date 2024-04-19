@@ -20,7 +20,11 @@ public class ShipService : IShipService
             return "Такого пирса не существует.";
         }
 
+        var newShip = await _context.Ships.FirstOrDefaultAsync(x => x.Id == shipId);
         var allShips = await _context.Ships.Where(x => x.Pier.Id == pierId).ToListAsync();
+
+        allShips.Add(newShip);
+
         var sortedShips = allShips.OrderByDescending(ship => ship.Length)
                                   .ThenByDescending(ship => ship.Width)
                                   .ToList();
@@ -73,24 +77,28 @@ public class ShipService : IShipService
             }
         }
 
-        return "Можно причалить.";
+        return "Корабль причалил.";
     }
-    public async Task CreateShip(Ship ship)
+    public async Task<string> CreateShip(Ship ship)
     {
-        await _context.Set<Ship>().AddAsync(ship);
+        await _context.Ships.AddAsync(ship);
         await _context.SaveChangesAsync();
+
+        return "Корабль добавлен";
     }
-    public async Task UpdateShip(Ship ship)
+    public async Task<string> UpdateShip(Ship ship)
     {
         if (!_context.Ships.Any(s => s.Id == ship.Id))
         {
             throw new Exception("Корабль с таким идентификатором не существует.");
         }
 
-        var newShip = _context.Set<Ship>().Update(ship);
+        var newShip = _context.Ships.Update(ship);
         await _context.SaveChangesAsync();
+
+        return "Данные корабля обновлены";
     }
-    public async Task DeleteShip(string id)
+    public async Task<string> DeleteShip(string id)
     {
         if (!_context.Ships.Any(s => s.Id == id))
         {
@@ -98,18 +106,20 @@ public class ShipService : IShipService
         }
 
         var shipByDelete = _context.Set<Ship>().FirstOrDefault(x => x.Id == id) ?? throw new Exception("Корабль с таким идентификатором не существует.");
-        _context.Set<Ship>().Remove(shipByDelete);
+        _context.Ships.Remove(shipByDelete);
         await _context.SaveChangesAsync();
+
+        return "Корабль удален";
     }
     public async Task<Ship> GetShip(string id)
     {        
-        var ship = _context.Set<Ship>().Find(id);
+        var ship = _context.Ships.FindAsync(id).Result;
         return ship == null ? throw new Exception("Корабль с таким идентификатором не существует.") : ship;
     }
 
     public async Task<List<Ship>> GetAllShip()
     {
-        var allShips = _context.Set<Ship>().ToList();
+        var allShips = _context.Ships.ToList();
         await _context.SaveChangesAsync();
         return allShips;
     }

@@ -1,0 +1,27 @@
+﻿@using ShipDiplom.Models.Entities;
+HTML
+@model Ship
+
+@section Scripts {
+    <script>
+        function deleteShipConfirmed() {
+            window.location.href = '@Url.Action("DeleteShipConfirmed", "Ship", new { shipId = @Model.Id })';
+        }
+    </script>
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Удалить корабль</h2>
+            <p>Вы действительно хотите удалить этот корабль?</p>
+            <p><strong>Название:</strong> @Model.ShipType</p>
+            <p><strong>ID системы:</strong> @Model.SystemId</p>
+            <p><strong>Длина:</strong> @Model.Length</p>
+            <p><strong>Ширина:</strong> @Model.Width</p>
+            <p><strong>ID владельца:</strong> @Model.OwnerId</p>
+            <button type="button" class="btn btn-danger" onclick="deleteShipConfirmed()">Удалить</button>
+            <a href="@Url.Action("Index", "Ship")" class="btn btn-primary">Назад к списку</a>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,29 @@
+﻿@using ShipDiplom.Models.Entities;
+HTML
+@model Ship
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    <div class="form-group">
+        <label for="shipType">Тип корабля:</label>
+        @Html.EditorFor(model => model.ShipType, new { htmlAttributes = new { @class = "form-control" } })
+    </div>
+    <div class="form-group">
+        <label for="systemId">ID системы:</label>
+        @Html.EditorFor(model => model.SystemId, new { htmlAttributes = new { @class = "form-control" } })
+    </div>
+    <div class="form-group">
+        <label for="length">Длина:</label>
+        @Html.EditorFor(model => model.Length, new { htmlAttributes = new { @class = "form-control" } })
+    </div>
+    <div class="form-group">
+        <label for="width">Ширина:</label>
+        @Html.EditorFor(model => model.Width, new { htmlAttributes = new { @class = "form-control" } })
+    </div>
+    <div class="form-group">
+        <label for="ownerId">ID владельца:</label>
+        @Html.EditorFor(model => model.OwnerId, new { htmlAttributes = new { @class = "form-control" } })
+    </div>
+    <button type="submit" class="btn btn-primary">Создать</button>
+}

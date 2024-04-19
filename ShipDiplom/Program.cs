@@ -1,7 +1,9 @@
 using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using ShipDiplom.Database;
+using ShipDiplom.Interfaces;
 using ShipDiplom.Models;
+using ShipDiplom.Services;
 
 namespace ShipDiplom;
 
@@ -32,6 +34,9 @@ public class Program
         builder.Services.AddControllersWithViews();
 
         builder.Services.AddDomain();
+
+        builder.Services.AddTransient<IShipService, ShipService>();
+        builder.Services.AddTransient<IPierService, PierService>();
 
         var app = builder.Build();
 

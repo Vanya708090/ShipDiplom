@@ -22,4 +22,10 @@ public class AppDbContext : DbContext
         modelBuilder.ApplyConfiguration(new ShipConfiguration());
 
     }
+
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    {
+        base.OnConfiguring(optionsBuilder);
+
+    }
 }
