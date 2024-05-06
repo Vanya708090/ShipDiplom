@@ -23,7 +23,10 @@ public class ShipService : IShipService
         var newShip = await _context.Ships.FirstOrDefaultAsync(x => x.Id == shipId);
         var allShips = await _context.Ships.Where(x => x.Pier.Id == pierId).ToListAsync();
 
-        allShips.Add(newShip);
+        if(newShip != null)
+        {
+            allShips.Add(newShip);
+        }
 
         var sortedShips = allShips.OrderByDescending(ship => ship.Length)
                                   .ThenByDescending(ship => ship.Width)
