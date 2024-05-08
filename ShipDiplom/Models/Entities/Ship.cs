@@ -7,5 +7,6 @@ public class Ship : BaseEntity
     public float? Length { get; set; }
     public float? Width { get; set; }
     public string OwnerId { get; set; }
+    public string PierId { get; set; }
     public Pier Pier { get; set; }
 }

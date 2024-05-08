@@ -1,6 +1,18 @@
-﻿@using ShipDiplom.Models.Entities;
-HTML
-@model Ship
+﻿@model ShipDiplom.Models.Entities.Ship
+
+@{
+    var successMessage = TempData["SuccessMessage"] as string;
+    var errorMessage = TempData["ErrorMessage"] as string;
+}
+
+@if (!string.IsNullOrEmpty(successMessage))
+{
+    <div class="alert alert-success">@successMessage</div>
+}
+else if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
 
 @using (Html.BeginForm())
 {
@@ -26,4 +38,11 @@ HTML
         @Html.EditorFor(model => model.OwnerId, new { htmlAttributes = new { @class = "form-control" } })
     </div>
     <button type="submit" class="btn btn-primary">Создать</button>
+
+    @if (ViewContext.HttpContext.Request.Method == "POST" && (!string.IsNullOrEmpty(successMessage) || !string.IsNullOrEmpty(errorMessage)))
+    {
+        <div class="alert @(string.IsNullOrEmpty(successMessage) ? "alert-danger" : "alert-success")">
+            @(string.IsNullOrEmpty(successMessage) ? errorMessage : successMessage)
+        </div>
+    }
 }

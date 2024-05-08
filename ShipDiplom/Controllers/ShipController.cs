@@ -22,21 +22,18 @@ public class ShipController : Controller
     [HttpPost]
     public async Task<ActionResult> CreateShip(Ship ship)
     {
-        if (!ModelState.IsValid)
-        {
-            return View(ship);
-        }
-
         var message = await _shipService.CreateShip(ship);
 
         if (message.StartsWith("Корабль добавлен"))
         {
             TempData["SuccessMessage"] = message;
-            return RedirectToAction("Index");
+        }
+        else
+        {
+            TempData["ErrorMessage"] = message;
         }
 
-        TempData["ErrorMessage"] = message;
-        return View(ship);
+        return View();
     }
 
     [HttpGet]
