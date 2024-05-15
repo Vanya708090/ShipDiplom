@@ -1,0 +1,39 @@
+﻿@using ShipDiplom.Models.Entities;
+
+@model Pier
+
+@section Scripts {
+    <script>
+        function deletePierConfirmed() {
+            fetch('@Url.Action("DeletePierConfirmed", "Pier", new { pierId = @Model.Id })', {
+                method: 'DELETE'
+            }).then(response => {
+                if (response.ok) {
+                    location.href = '@Url.Action("GetAllPiers", "Pier")';
+                } else if (response.status === 404) {
+                    console.error('Причал не найден');
+                } else {
+                    console.error('Произошла ошибка при удалении причала:', response.statusText);
+                }
+            }).catch(error => console.error('Произошла ошибка:', error));
+        }
+
+    </script>
+}
+
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Удалить причал</h2>
+            <p>Вы действительно хотите удалить этот причал?</p>
+            <p><strong>Название:</strong> @Model.Name</p>
+            <p><strong>Длина:</strong> @Model.Length</p>
+            <p><strong>Ширина:</strong> @Model.Width</p>
+            <p><strong>Трек номер:</strong> @Model.TrackingNumber</p>
+            <p><strong>Локация:</strong> @Model.Location</p>
+            <button type="button" class="btn btn-danger" onclick="deletePierConfirmed()">Удалить</button>
+            <a href="@Url.Action("GetAllPiers", "Pier")" class="btn btn-primary">Назад к списку</a>
+        </div>
+    </div>
+</div>

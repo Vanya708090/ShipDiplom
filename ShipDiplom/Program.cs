@@ -1,5 +1,9 @@
+using AutoMapper;
 using Microsoft.EntityFrameworkCore;
 using ShipDiplom.Database;
+using ShipDiplom.Interfaces;
+using ShipDiplom.Models;
+using ShipDiplom.Services;
 
 namespace ShipDiplom;
 
@@ -16,6 +20,11 @@ public class Program
             .AddEnvironmentVariables(prefix: "ENV_")
             .AddUserSecrets("AF72ABA5-6526-46CC-AFD6-CAB7550E7BC1");
 
+        builder.Services.AddSingleton(new MapperConfiguration(mc =>
+        {
+            mc.AddProfile<ControllersMappingProfile>();
+        }).CreateMapper());
+
         builder.Services.AddDbContext<AppDbContext>(options =>
         {
             options.UseNpgsql(configuration["App:DbConnectionString"]);
@@ -25,6 +34,9 @@ public class Program
         builder.Services.AddControllersWithViews();
 
         builder.Services.AddDomain();
+
+        builder.Services.AddTransient<IShipService, ShipService>();
+        builder.Services.AddTransient<IPierService, PierService>();
 
         var app = builder.Build();
 

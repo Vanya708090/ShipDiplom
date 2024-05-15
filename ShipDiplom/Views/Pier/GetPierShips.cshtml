@@ -1,0 +1,32 @@
+﻿@using ShipDiplom.Models.Dto;
+
+@model LeaveShipViewModel
+
+<h2>Корабли на причале</h2>
+<a href="@Url.Action("GetAllShips", "Ship")" class="btn btn-info">Пришвартовать корабль</a>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Название</th>
+            <th>ID системы</th>
+            <th>Длина</th>
+            <th>Ширина</th>
+            <th>ID владельца</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var ship in Model.Ships)
+        {
+            <tr>
+                <td>@ship.Name</td>
+                <td>@ship.SystemId</td>
+                <td>@ship.Length</td>
+                <td>@ship.Width</td>
+                <td>@ship.OwnerId</td>
+                <td>
+                    <a href="@Url.Action("LeaveDockShips", "Ship", new { shipId = ship.Id, pierId = Model.PierId })" class="btn btn-primary">Отшвартовать</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

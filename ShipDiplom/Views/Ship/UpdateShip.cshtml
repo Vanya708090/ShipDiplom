@@ -1,0 +1,35 @@
+﻿@model ShipDiplom.Models.Entities.Ship
+
+@using (Html.BeginForm("UpdateShipConfirmed", "Ship", FormMethod.Post, new { id = "updateForm" }))
+{
+    @Html.AntiForgeryToken()
+    <h2>Обновление данных корабля</h2>
+    <input type="hidden" id="shipId" name="Id" value="@Model.Id" />
+
+    <div class="form-group">
+        <label for="shipType">Название:</label>
+        @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
+    </div>
+
+    <div class="form-group">
+        <label for="systemId">ID системы:</label>
+        @Html.EditorFor(model => model.SystemId, new { htmlAttributes = new { @class = "form-control" } })
+    </div>
+
+    <div class="form-group">
+        <label for="length">Длина:</label>
+        @Html.EditorFor(model => model.Length, new { htmlAttributes = new { @class = "form-control" } })
+    </div>
+
+    <div class="form-group">
+        <label for="width">Ширина:</label>
+        @Html.EditorFor(model => model.Width, new { htmlAttributes = new { @class = "form-control" } })
+    </div>
+
+    <div class="form-group">
+        <label for="ownerId">ID владельца:</label>
+        @Html.EditorFor(model => model.OwnerId, new { htmlAttributes = new { @class = "form-control" } })
+    </div>
+
+    <button type="submit" class="btn btn-primary">Обновить</button>
+}

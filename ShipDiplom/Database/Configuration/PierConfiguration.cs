@@ -14,5 +14,6 @@ public class PierConfiguration: BaseConfigurationWithId<Pier>
         builder.Property(x => x.Location).IsRequired();
         builder.Property(x => x.Length).IsRequired();
         builder.Property(x => x.Width).IsRequired();
+
     }
 }
