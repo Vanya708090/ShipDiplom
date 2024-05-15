@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ShipDiplom.Interfaces;
+using ShipDiplom.Models;
 using ShipDiplom.Models.Entities;
 
 namespace ShipDiplom.Controllers;
@@ -7,10 +8,12 @@ namespace ShipDiplom.Controllers;
 public class ShipController : Controller
 {
     private readonly IShipService _shipService;
+    private readonly IPierService _pierService;
 
-    public ShipController(IShipService shipService)
+    public ShipController(IShipService shipService, IPierService pierService)
     {
         _shipService = shipService;
+        _pierService = pierService;
     }
 
     [HttpGet]
@@ -48,8 +51,20 @@ public class ShipController : Controller
         return View(ship);
     }
 
+    [HttpGet]
+    public async Task<ActionResult> UpdateShip(string shipId)
+    {
+        var ship = await _shipService.GetShip(shipId);
+        if (ship == null)
+        {
+            return NotFound();
+        }
+
+        return View(ship);
+    }
+
     [HttpPost]
-    public async Task<ActionResult> UpdateShip(Ship ship)
+    public async Task<ActionResult> UpdateShipConfirmed(Ship ship)
     {
         if (!ModelState.IsValid)
         {
@@ -60,13 +75,14 @@ public class ShipController : Controller
 
         if (message.StartsWith("Данные корабля обновлены"))
         {
-            TempData["SuccessMessage"] = message;
-            return RedirectToAction("Index");
+            return RedirectToAction("GetAllShips", "Ship");
         }
-
-        TempData["ErrorMessage"] = message;
-        return View(ship);
+        else
+        {
+            return BadRequest(message);
+        }
     }
+
 
     [HttpGet]
     public async Task<ActionResult> DeleteShip(string shipId)
@@ -80,20 +96,20 @@ public class ShipController : Controller
         return View(ship);
     }
 
-    [HttpPost]
+    [HttpDelete]
     public async Task<ActionResult> DeleteShipConfirmed(string shipId)
     {
-        var message = await _shipService.DeleteShip(shipId);
-
-        if (message.StartsWith("Корабль удален"))
+        try
         {
-            TempData["SuccessMessage"] = message;
-            return RedirectToAction("Index");
+            var message = await _shipService.DeleteShip(shipId);
+            return Ok();
         }
-
-        TempData["ErrorMessage"] = message;
-        return View();
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
+
 
     [HttpGet]
     public async Task<ActionResult> GetAllShips()
@@ -103,9 +119,29 @@ public class ShipController : Controller
     }
 
     [HttpGet]
+    public async Task<ActionResult> LeaveDockShips(string shipId, string pierId)
+    {
+        var message = await _shipService.LeaveDock(pierId, shipId);
+        return RedirectToAction("GetAllPiers", "Pier");
+    }
+
+    [HttpGet]
     public async Task<ActionResult> CanDockShips(string shipId, string pierId)
     {
         var message = await _shipService.CanDockShips(shipId, pierId);
-        return View(new { Message = message });
+        return Json(new { message });
     }
+
+    [HttpGet]
+    public async Task<ActionResult> CanDockShipsView(string shipId)
+    {
+        var model = new DockShipViewModel
+        {
+            ShipId = shipId,
+            Piers = await _pierService.GetAllPiers()
+        };
+
+        return View("SelectDockForShip", model);
+    }
+
 }

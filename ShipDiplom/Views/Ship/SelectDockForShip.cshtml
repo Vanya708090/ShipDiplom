@@ -1,0 +1,43 @@
+﻿@model ShipDiplom.Models.DockShipViewModel
+
+<h2>Выберите причал для причаливания корабля</h2>
+
+@using (Html.BeginForm("CanDockShips", "Ship", FormMethod.Post))
+{
+    @Html.AntiForgeryToken()
+
+    <div class="form-group">
+        <label for="selectedDockId">Выберите причал:</label>
+        @Html.DropDownListFor(model => model.ShipId, new SelectList(Model.Piers, "Id", "Name"), "Выберите причал", new { @class = "form-control", id = "selectedDockId" })
+    </div>
+    <div id="dockMessage"></div>
+
+    <input type="hidden" name="shipId" value="@Model.ShipId" />
+
+    <button type="button" id="checkDockButton" class="btn btn-info">Пришвартовать</button>
+}
+
+@section Scripts {
+    <script>
+        document.getElementById('checkDockButton').addEventListener('click', function () {
+            var selectedDockId = document.getElementById('selectedDockId').value;
+            var shipId = '@Model.ShipId';
+
+            var url = '@Url.Action("CanDockShips", "Ship")' + '?shipId=' + shipId + '&pierId=' + selectedDockId;
+
+            fetch(url, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            })
+                .then(response => response.json())
+                .then(data => {
+                    var messageElement = document.getElementById('dockMessage');
+                    messageElement.innerHTML = data.message;
+                })
+                .catch(error => console.error('Произошла ошибка:', error));
+        });
+    </script>
+}
+

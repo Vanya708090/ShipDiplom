@@ -10,7 +10,7 @@ public class ShipConfiguration : BaseConfigurationWithId<Ship>
     {
         base.Configure(builder);
 
-        builder.Property(x => x.ShipType).IsRequired();
+        builder.Property(x => x.Name).IsRequired();
         builder.Property(x => x.PierId).IsRequired(false);
         builder.Property(x => x.SystemId).IsRequired();
         builder.Property(x => x.OwnerId).IsRequired();

@@ -9,4 +9,5 @@ public interface IPierService
     Task<List<Pier>> GetAllPiers();
     Task<Pier> GetPier(string id);
     Task<string> UpdatePier(Pier pier);
+    Task<List<Ship>> GetPierShips(string id);
 }

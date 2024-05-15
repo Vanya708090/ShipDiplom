@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using ShipDiplom.Interfaces;
+using ShipDiplom.Models.Dto;
 using ShipDiplom.Models.Entities;
 
 namespace ShipDiplom.Controllers;
@@ -22,20 +23,17 @@ public class PierController : Controller
     [HttpPost]
     public async Task<ActionResult> CreatePier(Pier pier)
     {
-        if (!ModelState.IsValid)
-        {
-            return View(pier);
-        }
-
         var message = await _pierService.CreatePier(pier);
 
         if (message.StartsWith("Новый причал создан"))
         {
             TempData["SuccessMessage"] = message;
-            return RedirectToAction("Index");
+        }
+        else
+        {
+            TempData["ErrorMessage"] = message;
         }
 
-        TempData["ErrorMessage"] = message;
         return View(pier);
     }
 
@@ -63,12 +61,12 @@ public class PierController : Controller
 
         if (message.StartsWith("Данные причала обновлены"))
         {
-            TempData["SuccessMessage"] = message;
-            return RedirectToAction("Index");
+            return RedirectToAction("GetAllPiers", "Pier");
         }
-
-        TempData["ErrorMessage"] = message;
-        return View(pier);
+        else
+        {
+            return BadRequest();
+        }
     }
 
     [HttpGet]
@@ -83,19 +81,18 @@ public class PierController : Controller
         return View(pier);
     }
 
-    [HttpPost]
+    [HttpDelete]
     public async Task<ActionResult> DeletePierConfirmed(string pierId)
     {
-        var message = await _pierService.DeletePier(pierId);
-
-        if (message.StartsWith("Причал удален"))
+        try
         {
-            TempData["SuccessMessage"] = message;
-            return RedirectToAction("Index");
+            var message = await _pierService.DeletePier(pierId);
+            return Ok();
         }
-
-        TempData["ErrorMessage"] = message;
-        return View();
+        catch (Exception ex)
+        {
+            return BadRequest(ex.Message);
+        }
     }
 
     [HttpGet]
@@ -108,6 +105,18 @@ public class PierController : Controller
         }
 
         return View(pier);
+    }
+
+    [HttpGet]
+    public async Task<ActionResult> GetPierShips(string pierId)
+    {
+        var ships = await _pierService.GetPierShips(pierId);
+        if (ships == null)
+        {
+            return NotFound();
+        }
+
+        return View(new LeaveShipViewModel { PierId = pierId, Ships = ships });
     }
 
     [HttpGet]

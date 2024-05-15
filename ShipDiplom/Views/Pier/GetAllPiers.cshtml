@@ -1,0 +1,40 @@
+﻿@using ShipDiplom.Models.Entities;
+
+@model IEnumerable<Pier>
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <h2>Все причалы</h2>
+            <a href="@Url.Action("CreatePier", "Pier")" class="btn btn-info">Создать причал</a>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Название</th>
+                        <th>Трек номер</th>
+                        <th>Длина</th>
+                        <th>Ширина</th>
+                        <th>Локация</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var pier in Model)
+                    {
+                        <tr>
+                            <td>@pier.Name</td>
+                            <td>@pier.TrackingNumber</td>
+                            <td>@pier.Length</td>
+                            <td>@pier.Width</td>
+                            <td>@pier.Location</td>
+                            <td>
+                                <a href="@Url.Action("UpdatePier", "Pier", new { pierId = pier.Id })" class="btn btn-primary">Изменить</a>
+                                <a href="@Url.Action("DeletePier", "Pier", new { pierId = pier.Id })" class="btn btn-danger">Удалить</a>
+                                <a href="@Url.Action("GetPierShips", "Pier", new { pierId = pier.Id })" class="btn btn-info">Пришвартованные корабли</a>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>

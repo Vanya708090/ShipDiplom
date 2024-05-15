@@ -1,11 +1,12 @@
 ﻿@using ShipDiplom.Models.Entities;
-HTML
+
 @model IEnumerable<Ship>
 
 <div class="container">
     <div class="row">
         <div class="col-md-12">
             <h2>Все корабли</h2>
+            <a href="@Url.Action("CreateShip", "Ship")" class="btn btn-info">Создать корабль</a>
             <table class="table table-striped">
                 <thead>
                     <tr>
@@ -21,7 +22,7 @@ HTML
                     @foreach (var ship in Model)
                     {
                         <tr>
-                            <td>@ship.ShipType</td>
+                            <td>@ship.Name</td>
                             <td>@ship.SystemId</td>
                             <td>@ship.Length</td>
                             <td>@ship.Width</td>
@@ -29,7 +30,7 @@ HTML
                             <td>
                                 <a href="@Url.Action("UpdateShip", "Ship", new { shipId = ship.Id })" class="btn btn-primary">Изменить</a>
                                 <a href="@Url.Action("DeleteShip", "Ship", new { shipId = ship.Id })" class="btn btn-danger">Удалить</a>
-                                <a href="@Url.Action("CanDockShips", "Ship", new { shipId = ship.Id })" class="btn btn-info">Проверить швартовку</a>
+                                <a href="@Url.Action("CanDockShipsView", "Ship", new { shipId = ship.Id })" class="btn btn-info">Пришвартовать к причалу</a>
                             </td>
                         </tr>
                     }

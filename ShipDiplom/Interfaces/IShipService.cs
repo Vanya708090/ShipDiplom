@@ -10,4 +10,5 @@ public interface IShipService
     Task<List<Ship>> GetAllShip();
     Task<Ship> GetShip(string id);
     Task<string> UpdateShip(Ship ship);
+    Task<string> LeaveDock(string pierId, string shipId);
 }

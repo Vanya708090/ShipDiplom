@@ -79,8 +79,31 @@ public class ShipService : IShipService
                 levelNum++;
             }
         }
-
+        pier.Ships.Add(newShip);
+        await _context.SaveChangesAsync();
         return "Корабль причалил.";
+    }
+
+    public async Task<string> LeaveDock(string pierId, string shipId)
+    {
+        var pier = await _context.Piers.FirstOrDefaultAsync(x => x.Id == pierId);
+
+        if(pier == null)
+        {
+            return "Причал не найден";
+        }
+
+        var ship = await _context.Ships.FirstOrDefaultAsync(x => x.Id == shipId);
+
+        if (ship == null)
+        {
+            return "Корабль не найден";
+        }
+
+        pier.Ships.Remove(ship);
+        await _context.SaveChangesAsync();
+
+        return $"Корабль {ship.Name} отчалил от причала.";
     }
     public async Task<string> CreateShip(Ship ship)
     {
@@ -116,7 +139,7 @@ public class ShipService : IShipService
     }
     public async Task<Ship> GetShip(string id)
     {        
-        var ship = _context.Ships.FindAsync(id).Result;
+        var ship = await _context.Ships.FindAsync(id);
         return ship == null ? throw new Exception("Корабль с таким идентификатором не существует.") : ship;
     }
 
