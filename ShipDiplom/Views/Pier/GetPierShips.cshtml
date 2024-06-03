@@ -4,6 +4,7 @@
 
 <h2>Корабли на причале</h2>
 <a href="@Url.Action("GetAllShips", "Ship")" class="btn btn-info">Пришвартовать корабль</a>
+<a href="@Url.Action("GetShipLevels", "Pier", new { pierId = Model.PierId })" class="btn btn-info">Оптимальная расстановка</a>
 <table class="table">
     <thead>
         <tr>

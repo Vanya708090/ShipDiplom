@@ -8,10 +8,12 @@ namespace ShipDiplom.Controllers;
 public class PierController : Controller
 {
     private readonly IPierService _pierService;
+    private readonly IShipService _shipService;
 
-    public PierController(IPierService pierService)
+    public PierController(IPierService pierService, IShipService shipService)
     {
         _pierService = pierService;
+        _shipService = shipService;
     }
 
     [HttpGet]
@@ -125,5 +127,25 @@ public class PierController : Controller
         var piers = await _pierService.GetAllPiers();
         return View(piers);
     }
+    [HttpGet]
+    public async Task<IActionResult> GetShipLevels(string pierId)
+    {
+        try
+        {
+            var shipLevels = await _shipService.CanDockShipsOptionalLocation(pierId);
+            return View(shipLevels);
+        }
+        catch (ArgumentException ex)
+        {
+            // Обработка ошибки, если причал не существует
+            ViewBag.ErrorMessage = ex.Message;
+            return View("Error");
+        }
+        catch (InvalidOperationException ex)
+        {
+            // Обработка ошибки, если не удалось разместить корабли
+            ViewBag.ErrorMessage = ex.Message;
+            return View("Error");
+        }
+    }
 }
-

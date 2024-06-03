@@ -13,31 +13,78 @@
     <div id="dockMessage"></div>
 
     <input type="hidden" name="shipId" value="@Model.ShipId" />
+    <input type="hidden" id="selectedDockLocation" name="selectedDockLocation" />
 
     <button type="button" id="checkDockButton" class="btn btn-info">Пришвартовать</button>
 }
 
+<div id="map" style="height: 500px; width: 100%;"></div>
+
 @section Scripts {
     <script>
-        document.getElementById('checkDockButton').addEventListener('click', function () {
-            var selectedDockId = document.getElementById('selectedDockId').value;
-            var shipId = '@Model.ShipId';
+        document.addEventListener('DOMContentLoaded', (event) => {
+            var map = L.map('map').setView([55.7558, 37.6176], 13);
 
-            var url = '@Url.Action("CanDockShips", "Ship")' + '?shipId=' + shipId + '&pierId=' + selectedDockId;
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
 
-            fetch(url, {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            })
-                .then(response => response.json())
-                .then(data => {
-                    var messageElement = document.getElementById('dockMessage');
-                    messageElement.innerHTML = data.message;
+            var markers = {};
+            var selectedMarker = null;
+
+        @foreach (var pier in Model.Piers)
+        {
+            <text>
+                var location = '@pier.Location'.split(',');
+                var latitude = parseFloat(location[0]);
+                var longitude = parseFloat(location[1]);
+                var marker = L.marker([latitude, longitude]).addTo(map).bindPopup('@pier.Name');
+                marker.pierId = '@pier.Id';
+                markers['@pier.Id'] = marker;
+                marker.on('click', function (e) {
+                    document.getElementById('selectedDockId').value = this.pierId;
+                    document.getElementById('selectedDockLocation').value = this.getLatLng().lat + ',' + this.getLatLng().lng;
+                    if (selectedMarker) {
+                        selectedMarker.setIcon(new L.Icon.Default());
+                    }
+                    this.setIcon(new L.Icon({ iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png', shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png' }));
+                    selectedMarker = this;
+                });
+            </text>
+        }
+
+                document.getElementById('selectedDockId').addEventListener('change', function () {
+                    var selectedDockId = this.value;
+                    var marker = markers[selectedDockId];
+                    map.setView(marker.getLatLng(), 13);
+                    marker.openPopup();
+                    document.getElementById('selectedDockLocation').value = marker.getLatLng().lat + ',' + marker.getLatLng().lng;
+                    if (selectedMarker) {
+                        selectedMarker.setIcon(new L.Icon.Default());
+                    }
+                    marker.setIcon(new L.Icon({ iconUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon-2x.png', shadowUrl: 'https://unpkg.com/leaflet@1.7.1/dist/images/marker-shadow.png' }));
+                    selectedMarker = marker;
+                });
+
+            document.getElementById('checkDockButton').addEventListener('click', function () {
+                var selectedDockId = document.getElementById('selectedDockId').value;
+                var shipId = '@Model.ShipId';
+
+                var url = '@Url.Action("CanDockShips", "Ship")' + '?shipId=' + encodeURIComponent(shipId) + '&pierId=' + encodeURIComponent(selectedDockId);
+
+                fetch(url, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
                 })
-                .catch(error => console.error('Произошла ошибка:', error));
+                    .then(response => response.json())
+                    .then(data => {
+                        var messageElement = document.getElementById('dockMessage');
+                        messageElement.innerHTML = data.message;
+                    })
+                    .catch(error => console.error('Произошла ошибка:', error));
+            });
         });
     </script>
 }
-

@@ -1,4 +1,4 @@
-﻿@model ShipDiplom.Models.Entities.Ship
+﻿@model ShipDiplom.Models.Dto.Request.ShipUpdateDto
 
 @using (Html.BeginForm("UpdateShipConfirmed", "Ship", FormMethod.Post, new { id = "updateForm" }))
 {
@@ -7,7 +7,7 @@
     <input type="hidden" id="shipId" name="Id" value="@Model.Id" />
 
     <div class="form-group">
-        <label for="shipType">Название:</label>
+        <label for="shipName">Название:</label>
         @Html.EditorFor(model => model.Name, new { htmlAttributes = new { @class = "form-control" } })
     </div>
 

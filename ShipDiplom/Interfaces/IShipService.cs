@@ -11,4 +11,5 @@ public interface IShipService
     Task<Ship> GetShip(string id);
     Task<string> UpdateShip(Ship ship);
     Task<string> LeaveDock(string pierId, string shipId);
+    Task<List<List<Ship>>> CanDockShipsOptionalLocation(string pierId);
 }

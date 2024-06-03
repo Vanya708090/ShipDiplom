@@ -1,0 +1,33 @@
+﻿@using ShipDiplom.Models.Entities;
+@model List<List<Ship>>
+
+@{
+    ViewBag.Title = "Ship Levels";
+}
+
+<h2>Уровни швартовки</h2>
+
+@if (Model != null && Model.Count > 0)
+{
+    for (int i = 0; i < Model.Count; i++)
+    {
+        <h3>Уровень @i</h3>
+        <ul>
+            @foreach (var ship in Model[i])
+            {
+                <li>@ship.Name (@ship.Length x @ship.Width)</li>
+            }
+        </ul>
+    }
+}
+else
+{
+    <p>No ships to display.</p>
+}
+
+@if (ViewBag.ErrorMessage != null)
+{
+    <div class="alert alert-danger">
+        @ViewBag.ErrorMessage
+    </div>
+}

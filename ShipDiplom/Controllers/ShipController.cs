@@ -1,6 +1,8 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using ShipDiplom.Interfaces;
 using ShipDiplom.Models;
+using ShipDiplom.Models.Dto.Request;
 using ShipDiplom.Models.Entities;
 
 namespace ShipDiplom.Controllers;
@@ -9,11 +11,13 @@ public class ShipController : Controller
 {
     private readonly IShipService _shipService;
     private readonly IPierService _pierService;
+    private readonly IMapper _mapper;
 
-    public ShipController(IShipService shipService, IPierService pierService)
+    public ShipController(IShipService shipService, IPierService pierService, IMapper mapper)
     {
         _shipService = shipService;
         _pierService = pierService;
+        _mapper = mapper;
     }
 
     [HttpGet]
@@ -60,16 +64,20 @@ public class ShipController : Controller
             return NotFound();
         }
 
-        return View(ship);
+        var shipDto = _mapper.Map<ShipUpdateDto>(ship);
+
+        return View(shipDto);
     }
 
     [HttpPost]
-    public async Task<ActionResult> UpdateShipConfirmed(Ship ship)
+    public async Task<ActionResult> UpdateShipConfirmed(ShipUpdateDto shipDto)
     {
         if (!ModelState.IsValid)
         {
-            return View(ship);
+            return RedirectToAction("UpdateShipConfirmed", "Ship");
         }
+
+        var ship = _mapper.Map<Ship>(shipDto);
 
         var message = await _shipService.UpdateShip(ship);
 
