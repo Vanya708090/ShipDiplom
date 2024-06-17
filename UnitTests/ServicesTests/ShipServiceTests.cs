@@ -187,7 +187,7 @@ public class ShipServiceTests
 
         Assert.Equal("Корабль удален", result);
     }
-
+    [Fact]
     public async Task UpdateShipTest()
     {
         string id = "1";
